@@ -204,7 +204,7 @@ func cnet(ips, maskOrPrefixs, submaskOrPrefixs string) error {
 		}
 
 		fmt.Println("---------sub calc (IPv6)---------")
-		fmt.Println("IPv6地址        :", ip)
+		fmt.Println("IPv6地址         :", ip)
 		fmt.Println("网络~最大地址    :", networkAddress, "~", maxAddress)
 		fmt.Println("前缀长度         :", prefix)
 		fmt.Println("可用地址数量     :", availQua.String())
@@ -339,7 +339,9 @@ func cnet(ips, maskOrPrefixs, submaskOrPrefixs string) error {
 		if subPrefix > 0 && subPrefix > prefix {
 			fmt.Println("\n---------DivSubnet---------")
 			numSubnets := int(math.Pow(2, float64(subPrefix-prefix)))
-			fmt.Printf("划分 %d 个 %s/%d 子网:\n", numSubnets, sub1network, subPrefix)
+			subnetWcInt := ^uint32(0xFFFFFFFF<<(32-subPrefix)) & 0xFFFFFFFF
+			subnetWcAddress := net.IPv4(byte(subnetWcInt>>24), byte(subnetWcInt>>16), byte(subnetWcInt>>8), byte(subnetWcInt)).String()
+			fmt.Printf("划分 %d 个 (%s | %d | %s) 子网:\n", numSubnets, sub1network, subPrefix, subnetWcAddress)
 			for i := 0; i < numSubnets; i++ {
 				newNetworkInt := networkInt + uint32(i*int(math.Pow(2, float64(32-subPrefix))))
 				newNetworkAddress := net.IPv4(byte(newNetworkInt>>24), byte(newNetworkInt>>16), byte(newNetworkInt>>8), byte(newNetworkInt)).String()
